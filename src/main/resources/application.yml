@@ -1,5 +1,12 @@
+# supabase 데이터베이스 설정
 spring:
   datasource:
     url: jdbc:postgresql://db.hdkqtzvmyciwwyeykagh.supabase.co:5432/postgres
     username: postgres
     password: bjh72301004!
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+
+

@@ -4,8 +4,7 @@ import java.time.LocalDate
 
 data class CreateListCardRequest(
     val title: String,
-    val name: String,
+    val authorName: String,
     val content: String,
-    val date: LocalDate,
-    val isDone: Boolean
+    val date: LocalDate
 )

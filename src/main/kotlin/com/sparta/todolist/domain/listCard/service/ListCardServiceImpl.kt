@@ -4,43 +4,68 @@ import com.sparta.todolist.domain.exception.ModelNotFoundException
 import com.sparta.todolist.domain.listCard.dto.CreateListCardRequest
 import com.sparta.todolist.domain.listCard.dto.ListCardResponse
 import com.sparta.todolist.domain.listCard.dto.UpdatelistCardRequest
+import com.sparta.todolist.domain.listCard.model.ListCard
+import com.sparta.todolist.domain.listCard.repository.ListCardRepository
+import com.sparta.todolist.domain.listCard.model.toResponse
+import com.sparta.todolist.domain.listCard.model.IsDoneStatus
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class ListCardServiceImpl: ListCardService {
-
+class ListCardServiceImpl(
+    private val listCardRepository: ListCardRepository
+): ListCardService
+{
     override fun getAllListCards(): List<ListCardResponse> {
-        // TODO: DB에서 모든 리스트카드 조회하여 ListCardResponse 목록으로 변환
-        TODO("Not yet implemented")
+        return listCardRepository.findAll().map { it.toResponse() }
     }
 
     override fun getListCardById(listCardId: Long): ListCardResponse {
-        // TODO: DB에서 ID기반으로 리스트카드 조회하여 ListCardResponse 로 변환
-        //  listCardId가 없다면 ModelNotFoundException
-        // TODO("Not yet implemented")
-        throw ModelNotFoundException("listCardId", 1L)
+        val listCard = listCardRepository.findByIdOrNull(listCardId)
+            ?: throw ModelNotFoundException("listCardId", listCardId)
+        return listCard.toResponse()
     }
 
 
     @Transactional
     override fun createListCard(request: CreateListCardRequest): ListCardResponse {
-        // TODO: request 를 ListCard로 변환 후 DB에 저장
-        TODO("Not yet implemented")
+        return listCardRepository.save(
+            ListCard(
+                title = request.title,
+                authorName = request.authorName,
+                content = request.content,
+                date = request.date,
+                isDone = IsDoneStatus.NOT_DONE
+            )
+        ).toResponse()
     }
 
     @Transactional
     override fun updateListCard(listCardId: Long, request: UpdatelistCardRequest): ListCardResponse {
-        // TODO: DB에서 listCardId 에 해당하는 ListCard를 가져온 후 request 기반으로 업데이트 후 DB에 업데이트,
-        //  결과를 ListCardResponse 로 변환 후 반환
-        //  listCardId가 없다면 ModelNotFoundException
-        TODO("Not yet implemented")
+        val listcard = listCardRepository.findByIdOrNull(listCardId)
+            ?: throw ModelNotFoundException("listCardId", listCardId)
+        val (title, authorName, content, isDone) = request
+
+        listcard.title = title
+        listcard.authorName = authorName
+        listcard.content = content
+        try {
+            listcard.isDone = IsDoneStatus.valueOf(isDone)
+        } catch (e: IllegalArgumentException) {
+            println("Invalid isDone value: $isDone. Using 'DONE' or 'NOT_DONE'.")
+            listcard.isDone = IsDoneStatus.NOT_DONE
+        }
+
+        return listCardRepository.save(listcard).toResponse()
     }
 
     @Transactional
     override fun deleteListCard(listCardId: Long) {
-        // TODO: DB에서 listCardId 에 해당하는 ListCard를 가져온 후 삭제
-        //  listCardId가 없다면 ModelNotFoundException
-        TODO("Not yet implemented")
+        val listCard = listCardRepository.findByIdOrNull(listCardId) ?: throw ModelNotFoundException("listCardId", listCardId)
+        listCardRepository.delete(listCard)
     }
+
+
+
 }

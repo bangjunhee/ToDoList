@@ -4,15 +4,21 @@ import com.sparta.todolist.domain.user.dto.SignUpRequest
 
 import com.sparta.todolist.domain.user.dto.UpdateUserProfileRequest
 import com.sparta.todolist.domain.user.dto.UserResponse
+import com.sparta.todolist.domain.user.service.UserService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class UserController {
+class UserController (
+    private val userService: UserService
+){
 
-    @PostMapping("/sign-up")
+    @PostMapping("/signup")
     fun signUp(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<UserResponse> {
-        TODO()
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.signUp(signUpRequest))
     }
 
     @PutMapping("/users/{userId}/profile")
@@ -20,7 +26,9 @@ class UserController {
         @PathVariable userId: Long,
         @RequestBody updateUserProfileRequest: UpdateUserProfileRequest
     ): ResponseEntity<UserResponse> {
-        TODO()
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.updateUserProfile(userId, updateUserProfileRequest))
     }
 
 }

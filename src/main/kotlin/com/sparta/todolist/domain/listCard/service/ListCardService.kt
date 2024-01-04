@@ -15,4 +15,5 @@ interface ListCardService {
     fun updateListCard(listCardId: Long, request: UpdatelistCardRequest): ListCardResponse
 
     fun deleteListCard(listCardId: Long)
+
 }

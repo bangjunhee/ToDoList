@@ -1,6 +1,5 @@
 package com.sparta.todolist.domain.listCard.controller
 
-import com.sparta.todolist.domain.exception.ModelNotFoundException
 import com.sparta.todolist.domain.listCard.dto.CreateListCardRequest
 import com.sparta.todolist.domain.listCard.dto.ListCardResponse
 import com.sparta.todolist.domain.listCard.dto.UpdatelistCardRequest
@@ -54,7 +53,6 @@ class ListCardController(
             .status(HttpStatus.OK)
             .body(listCardService.updateListCard(listCardId, updatelistCardRequest))
     }
-
     // 카드 삭제
 
 
@@ -65,6 +63,8 @@ class ListCardController(
             .status(HttpStatus.NO_CONTENT)
             .build()
     }
+
+
 
 
 }

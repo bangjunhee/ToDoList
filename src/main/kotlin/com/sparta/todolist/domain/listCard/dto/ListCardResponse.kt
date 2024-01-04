@@ -5,8 +5,8 @@ import java.time.LocalDate
 data class ListCardResponse(
     val id: Long,
     val title: String,
-    val name: String,
+    val authorName: String,
     val content: String,
     val date: LocalDate,
-    val isDone: Boolean
+    val isDone: String
 )
