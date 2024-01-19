@@ -14,7 +14,8 @@ class Comment(
 
     @Column(name = "content")
     var content: String,
-
+    // 1:N 구조에서 N쪽에 작성하는 코드
+    // @joinColumn 어노테이션으로 FK 설정해줌
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "listcard_id", nullable = false)
     var listCard: ListCard

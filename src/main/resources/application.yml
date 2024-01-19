@@ -4,9 +4,36 @@ spring:
     url: jdbc:postgresql://db.hdkqtzvmyciwwyeykagh.supabase.co:5432/postgres
     username: postgres
     password: bjh72301004!
+#  jpa:
+#    generate-ddl: true
+#    hibernate:
+#      ddl-auto: create
   jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: create
+#    generate-ddl: true
+#    hibernate:
+#      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql: trace
+        orm:
+          jdbc:
+            bind: trace
+          springframework: # 추가!
+            security: debug # 추가!
 
+auth:
+  jwt:
+    issuer: team.sparta.com
+    secret: HimyNamEIsBaNGJunhEEIm25TeaRsOlD
+    accessTokenExpirationHour: 168
 

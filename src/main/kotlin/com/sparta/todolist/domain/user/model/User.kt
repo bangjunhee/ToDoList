@@ -12,8 +12,13 @@ class User(
     @Column(name = "password", nullable = false)
     val password: String,
 
+    // @Embedded 어노테이션으로 Profile 이라는 클래스를 엔티티에 추가
+    // Profile 에 어떤 값이 추가되어도 상관 x
     @Embedded
     var profile: Profile,
+
+    @Column(name = "role")
+    val role: String = "USER"
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

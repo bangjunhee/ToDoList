@@ -1,20 +1,23 @@
 package com.sparta.todolist.domain.user.service
 
+import com.sparta.todolist.domain.exception.InvalidCredentialException
 import com.sparta.todolist.domain.exception.ModelNotFoundException
-import com.sparta.todolist.domain.user.dto.SignUpRequest
-import com.sparta.todolist.domain.user.dto.UpdateUserProfileRequest
-import com.sparta.todolist.domain.user.dto.UserResponse
+import com.sparta.todolist.domain.user.dto.*
 import com.sparta.todolist.domain.user.model.Profile
 import com.sparta.todolist.domain.user.model.User
 import com.sparta.todolist.domain.user.model.toResponse
 import com.sparta.todolist.domain.user.repository.UserRepository
+import com.sparta.todolist.infra.security.jwt.JwtPlugin
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserServiceImpl(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val jwtPlugin: JwtPlugin
 ): UserService {
 
     @Transactional
@@ -26,7 +29,7 @@ class UserServiceImpl(
         return userRepository.save(
             User(
                 email = signUpRequest.email,
-                password = signUpRequest.password,
+                password = passwordEncoder.encode(signUpRequest.password),
                 profile = Profile(
                     userName = signUpRequest.username
                 )
@@ -43,4 +46,21 @@ class UserServiceImpl(
 
         return userRepository.save(user).toResponse()
     }
+
+    override fun login(request: LoginRequest): LoginResponse {
+        val user = userRepository.findByEmail(request.email) ?: throw ModelNotFoundException("User", null)
+
+        if(!passwordEncoder.matches(request.password, user.password)){
+            throw InvalidCredentialException()
+        }
+
+        return LoginResponse(
+            accessToken = jwtPlugin.generateAccessToken(
+                subject = user.id.toString(),
+                email = user.email,
+                role = user.role
+            )
+        )
+    }
+
 }
